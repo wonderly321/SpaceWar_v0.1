@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
 [AddComponentMenu("MyGame/Enemy")]
 public class Enemy : MonoBehaviour
 {
@@ -9,16 +11,28 @@ public class Enemy : MonoBehaviour
     public float m_speed = 1;
     protected float m_rotSpeed = 30;
     protected Transform m_transform;
+
+    internal Renderer m_renderer;
+    internal bool m_isActiv = false;
     // Start is called before the first frame update
     void Start()
     {
         m_transform = this.transform;
+        m_renderer = this.GetComponent<Renderer>();
+    }
+    void OnBecameVisible()
+    {
+        m_isActiv = true;
     }
 
     // Update is called once per frame
     void Update()
     {
         UpdateMove();
+        if (m_isActiv && !m_renderer.isVisible)
+        {
+            Destroy(this.gameObject);
+        }
     }
     
     protected virtual void UpdateMove()

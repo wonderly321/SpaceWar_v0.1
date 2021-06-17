@@ -5,14 +5,19 @@ using UnityEngine;
 [AddComponentMenu("MyGame/Player")]
 public class Player : MonoBehaviour
 {
-    public float m_speed = 1;
+    public float m_speed = 1;  
+    public Transform m_rocket;  
+    public float m_life = 3;
     protected Transform m_transform;
-    public Transform m_rocket;
     protected float m_rocketTimer = 0;
-    // Start is called before the first frame update
+    public AudioClip m_shootClip;
+    protected AudioSource m_audio;
+    public Transform m_explosionFX;
+
     void Start()
     {
         m_transform = this.transform;
+        m_audio = this.GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -50,9 +55,20 @@ public class Player : MonoBehaviour
             if(Input.GetKey(KeyCode.Space))
             {
                 Instantiate(m_rocket, m_transform.position, m_transform.rotation);
+                m_audio.PlayOneShot(m_shootClip);
             }
-        } 
- 
-        
+        }   
+    }
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.tag.CompareTo("PlayerRocket") != 0)
+        {
+            m_life -= 1;
+            if (m_life <= 0)
+            {
+                Instantiate(m_explosionFX, m_transform.position, Quaternion.identity);
+                Destroy(this.gameObject);
+            }
+        }
     }
 }

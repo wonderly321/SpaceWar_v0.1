@@ -7,7 +7,7 @@ public class Player : MonoBehaviour
 {
     public float m_speed = 1;  
     public Transform m_rocket;  
-    public float m_life = 3;
+    public int m_life = 3;
     protected Transform m_transform;
     protected float m_rocketTimer = 0;
     public AudioClip m_shootClip;
@@ -64,6 +64,7 @@ public class Player : MonoBehaviour
         if (other.tag.CompareTo("PlayerRocket") != 0)
         {
             m_life -= 1;
+            GameManager.Instance.ChangeLife(m_life);
             if (m_life <= 0)
             {
                 Instantiate(m_explosionFX, m_transform.position, Quaternion.identity);

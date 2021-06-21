@@ -13,13 +13,31 @@ public class Player : MonoBehaviour
     public AudioClip m_shootClip;
     protected AudioSource m_audio;
     public Transform m_explosionFX;
+    protected Vector3 m_targetPos;
+    public LayerMask m_inputMask;
 
     void Start()
     {
         m_transform = this.transform;
         m_audio = this.GetComponent<AudioSource>();
+        m_targetPos = this.m_transform.position;
     }
-
+    void MoveTo()
+    {
+        if (Input.GetMouseButton(0))
+        {
+            Vector3 ms = Input.mousePosition;
+            Ray ray = Camera.main.ScreenPointToRay(ms);
+            RaycastHit hitinfo;
+            bool iscast = Physics.Raycast(ray, out hitinfo, 1000, m_inputMask);
+            if (iscast)
+            {
+                m_targetPos = hitinfo.point;
+            }
+        }
+        Vector3 pos = Vector3.MoveTowards(this.m_transform.position, m_targetPos, m_speed * Time.deltaTime);
+        this.m_transform.position = pos;
+    }
     // Update is called once per frame
     void Update()
     {
@@ -57,7 +75,8 @@ public class Player : MonoBehaviour
                 Instantiate(m_rocket, m_transform.position, m_transform.rotation);
                 m_audio.PlayOneShot(m_shootClip);
             }
-        }   
+        }
+        MoveTo(); 
     }
     void OnTriggerEnter(Collider other)
     {
